@@ -2,7 +2,11 @@ import { useCallback } from 'react';
 import type { FilterState } from '../../types';
 import { useFilters } from '../../hooks/useFilters';
 import { useRecipes } from '../../hooks/useRecipes';
-import { trackSearchPerformed } from '../../services/analyticsService';
+import {
+  trackSearchPerformed,
+  trackFilterApplied,
+  trackFilterReset,
+} from '../../services/analyticsService';
 import SearchBar from '../../components/SearchBar/SearchBar';
 import FilterPanel from '../../components/FilterPanel/FilterPanel';
 import RecipeList from '../../components/RecipeList/RecipeList';
@@ -24,6 +28,12 @@ export default function HomePage() {
 
   function handleUpdateFilter<K extends keyof FilterState>(key: K, value: FilterState[K]) {
     updateFilter(key, value);
+    trackFilterApplied(key, value as string | number | boolean);
+  }
+
+  function handleReset() {
+    resetFilters();
+    trackFilterReset();
   }
 
   return (
@@ -41,7 +51,7 @@ export default function HomePage() {
           <FilterPanel
             filters={filters}
             onUpdateFilter={handleUpdateFilter}
-            onReset={resetFilters}
+            onReset={handleReset}
           />
         </section>
 

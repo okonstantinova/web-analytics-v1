@@ -1,10 +1,12 @@
-import { HashRouter, Routes, Route } from 'react-router-dom';
+import { useEffect } from 'react';
+import { HashRouter, Routes, Route, useLocation } from 'react-router-dom';
 import { ConfigProvider } from 'antd';
 import { FavoritesProvider } from './context/FavoritesContext';
 import Header from './components/Header/Header';
 import HomePage from './pages/HomePage/HomePage';
 import RecipePage from './pages/RecipePage/RecipePage';
 import FavoritesPage from './pages/FavoritesPage/FavoritesPage';
+import { trackPageHit } from './services/analyticsService';
 import './styles/global.css';
 
 const antdTheme = {
@@ -17,11 +19,21 @@ const antdTheme = {
   },
 };
 
+// Tracks each SPA route change as a separate page hit in Yandex Metrika
+function YMPageTracker() {
+  const location = useLocation();
+  useEffect(() => {
+    trackPageHit(location.pathname + location.search + location.hash);
+  }, [location]);
+  return null;
+}
+
 export default function App() {
   return (
     <ConfigProvider theme={antdTheme}>
       <FavoritesProvider>
         <HashRouter>
+          <YMPageTracker />
           <Header />
           <Routes>
             <Route path="/" element={<HomePage />} />

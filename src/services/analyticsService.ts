@@ -1,27 +1,58 @@
-const COUNTER_ID = 0; // Replace with your Yandex Metrica counter ID
-
-function ym(event: string, params?: Record<string, unknown>) {
-  if (typeof window !== 'undefined' && window.ym && COUNTER_ID !== 0) {
-    window.ym(COUNTER_ID, 'reachGoal', event, params);
+declare global {
+  interface Window {
+    ym: (counterId: number, method: string, ...args: unknown[]) => void;
+    dataLayer: unknown[];
   }
 }
 
-export function trackRecipeView(recipeId: string, recipeName: string) {
-  ym('recipe_view', { recipe_id: recipeId, recipe_name: recipeName });
+const COUNTER_ID = 109042107;
+
+function ym(method: string, ...args: unknown[]) {
+  if (typeof window !== 'undefined' && typeof window.ym === 'function') {
+    window.ym(COUNTER_ID, method, ...args);
+  }
 }
 
-export function trackRecipeCardClick(recipeId: string, recipeName: string) {
-  ym('discovery_start', { recipe_id: recipeId, recipe_name: recipeName });
+// SPA navigation — called on every route change
+export function trackPageHit(url: string) {
+  ym('hit', url, { title: document.title });
 }
 
-export function trackSearchPerformed(query: string) {
-  ym('search_performed', { query });
+// Recipe list
+export function trackRecipeCardClick(recipeId: string | number, recipeName: string) {
+  ym('reachGoal', 'recipe_card_click', { recipe_id: recipeId, recipe_name: recipeName });
 }
 
+// Recipe page
+export function trackRecipeView(recipeId: string | number, recipeName: string) {
+  ym('reachGoal', 'recipe_view', { recipe_id: recipeId, recipe_name: recipeName });
+}
+
+// Scroll depth on recipe page — fires at 25 / 50 / 75 / 100 %
+export function trackRecipeScroll(recipeId: string | number, recipeName: string, depthPct: number) {
+  ym('reachGoal', 'recipe_scroll', { recipe_id: recipeId, recipe_name: recipeName, depth_pct: depthPct });
+}
+
+// Time spent on recipe page (seconds), fires on page leave
+export function trackRecipeTimeSpent(recipeId: string | number, recipeName: string, seconds: number) {
+  ym('reachGoal', 'recipe_time_spent', { recipe_id: recipeId, recipe_name: recipeName, seconds });
+}
+
+// Popular scenario chip click
+export function trackScenarioClick(scenarioId: string, scenarioLabel: string) {
+  ym('reachGoal', 'scenario_click', { scenario_id: scenarioId, scenario_label: scenarioLabel });
+}
+
+// Filters
 export function trackFilterApplied(filterType: string, value: string | number | boolean) {
-  ym('filter_applied', { filter_type: filterType, value });
+  ym('reachGoal', 'filter_applied', { filter_type: filterType, value });
 }
 
 export function trackFilterReset() {
-  ym('filter_reset');
+  ym('reachGoal', 'filter_reset');
+}
+
+// Search
+export function trackSearchPerformed(query: string) {
+  ym('reachGoal', 'search_performed', { query });
 }

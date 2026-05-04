@@ -27,5 +27,9 @@ export function useFilters() {
     setFilters(initialFilters);
   }
 
-  return { filters, updateFilter, resetFilters };
+  function applyScenario(overrides: Partial<FilterState>) {
+    setFilters({ ...initialFilters, ...overrides });
+  }
+
+  return { filters, updateFilter, resetFilters, applyScenario };
 }
