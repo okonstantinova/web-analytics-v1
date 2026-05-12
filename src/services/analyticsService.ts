@@ -1,10 +1,3 @@
-declare global {
-  interface Window {
-    ym: (counterId: number, method: string, ...args: unknown[]) => void;
-    dataLayer: unknown[];
-  }
-}
-
 const COUNTER_ID = 109042107;
 
 function ym(method: string, ...args: unknown[]) {

@@ -40,12 +40,12 @@ export interface FilterState {
 }
 
 export interface YandexMetrika {
-  (counterId: number, action: string, goal: string, params?: Record<string, unknown>): void;
-  (counterId: number, action: string, params?: Record<string, unknown>): void;
+  (counterId: number, action: string, ...args: unknown[]): void;
 }
 
 declare global {
   interface Window {
     ym: YandexMetrika;
+    dataLayer: unknown[];
   }
 }

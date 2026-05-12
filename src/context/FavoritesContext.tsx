@@ -2,9 +2,9 @@ import { createContext, useContext, useState, useEffect } from 'react';
 import type { ReactNode } from 'react';
 
 interface FavoritesContextType {
-  favorites: number[];
-  toggleFavorite: (id: number) => void;
-  isFavorite: (id: number) => boolean;
+  favorites: string[];
+  toggleFavorite: (id: string) => void;
+  isFavorite: (id: string) => boolean;
 }
 
 const FavoritesContext = createContext<FavoritesContextType>({
@@ -16,10 +16,10 @@ const FavoritesContext = createContext<FavoritesContextType>({
 const STORAGE_KEY = 'khrum_favorites';
 
 export function FavoritesProvider({ children }: { children: ReactNode }) {
-  const [favorites, setFavorites] = useState<number[]>(() => {
+  const [favorites, setFavorites] = useState<string[]>(() => {
     try {
       const stored = localStorage.getItem(STORAGE_KEY);
-      return stored ? (JSON.parse(stored) as number[]) : [];
+      return stored ? (JSON.parse(stored) as string[]) : [];
     } catch {
       return [];
     }
@@ -29,13 +29,13 @@ export function FavoritesProvider({ children }: { children: ReactNode }) {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(favorites));
   }, [favorites]);
 
-  function toggleFavorite(id: number) {
+  function toggleFavorite(id: string) {
     setFavorites(prev =>
       prev.includes(id) ? prev.filter(f => f !== id) : [...prev, id],
     );
   }
 
-  function isFavorite(id: number) {
+  function isFavorite(id: string) {
     return favorites.includes(id);
   }
 
